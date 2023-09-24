@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load the Wine Quality dataset (download it from the UCI ML Repository)
+wine_data = pd.read_csv('/content/winequality-red.csv')  # Replace with the path to your dataset
+
+# Define a binary target variable 'high_quality' (e.g., wines with quality >= 7 are considered high quality)
+wine_data['high_quality'] = (wine_data['quality'] >= 7).astype(int)
+
+# Separate features (X) and target variable (y)
+X = wine_data.drop(['quality', 'high_quality'], axis=1)
+y = wine_data['high_quality']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create a RandomForestClassifier (you can choose another classifier as well)
+classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train the classifier
+classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+classification_rep = classification_report(y_test, y_pred)
+
+print(f'Accuracy: {accuracy:.2f}')
+print('Classification Report:')
+print(classification_rep)
